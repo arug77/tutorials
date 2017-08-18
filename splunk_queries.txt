@@ -1,0 +1,4 @@
+index=application sourcetype=CMSI:ScriptProcessor MainEval exec | regex _raw="^(\S+\s+){2}(\S+)\s+\S+\s+ScriptProcessor\s+exec\s+\S+\s+\S+\s+MainEval.*" 
+| rex field=_raw "^(\S+\s+){2}(?<duration>\d+)ms\s+\S+\s+\S+\s+exec" | where isnotnull(duration)  |eval Total_Eval_Time= round(duration/1000, 2) | table _time Appseqno Total_Eval_Time _raw
+ 
+index=application sourcetype=CMSI:Debug Appseqno=*  request_id=* earliest=@w| timechart span=1d dc(Appseqno) as NumberOfAppsProcessed values(Appseqno) as Appseqno values(request_id) as RID 
